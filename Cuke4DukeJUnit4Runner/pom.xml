@@ -115,7 +115,7 @@
                             </includes>
                             <environmentVariables>
                                 <!--<JRUBY_HOME>/Users/Shared/tools/apache-maven-repository/.jruby</JRUBY_HOME>-->
-                                <GEM_HOME>/Users/Shared/tools/apache-maven-repository/.jruby</GEM_HOME>
+                                <GEM_HOME>${env.GEM_HOME}</GEM_HOME>
                             </environmentVariables>
                         </configuration>
                     </execution>
@@ -156,6 +156,7 @@
 						<gem>install cuke4duke --version ${cuke4duke.version}</gem>
 					</gems>
 				</configuration>
+<!--
 				<executions>
 					<execution>
 						<id>run-features</id>
@@ -165,6 +166,7 @@
 						</goals>
 					</execution>
 				</executions>
+-->
 			</plugin>
 		</plugins>
 	</build>

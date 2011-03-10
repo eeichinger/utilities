@@ -1,6 +1,5 @@
 package org.oaky.cuke4duke;
 
-import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
 import cuke4duke.ant.CucumberTask;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
@@ -14,12 +13,8 @@ import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
-import org.springframework.test.context.TestExecutionListener;
-import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 
-import java.io.File;
-import java.io.PrintStream;
-import java.util.Map;
+import java.io.*;
 import java.util.Properties;
 
 public class Cuke4DukeJUnit4Runner extends Runner {
@@ -42,7 +37,7 @@ public class Cuke4DukeJUnit4Runner extends Runner {
 
         @Override
         protected int executeJava(CommandlineJava commandLine) {
-            ByteOutputStream bos = new ByteOutputStream();
+            OutputStream bos = new ByteArrayOutputStream();
             RubyInstanceConfig config = new RubyInstanceConfig();
             config.setOutput(new PrintStream(bos));
             config.setError(new PrintStream(bos));

@@ -1,4 +1,4 @@
-package org.oaky.cuke4duke;
+package cuke4duke;
 
 import org.springframework.transaction.annotation.SpringTransactionAnnotationParser;
 import org.springframework.transaction.interceptor.TransactionAttribute;

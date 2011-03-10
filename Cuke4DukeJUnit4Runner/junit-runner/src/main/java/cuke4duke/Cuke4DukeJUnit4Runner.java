@@ -1,4 +1,4 @@
-package org.oaky.cuke4duke;
+package cuke4duke;
 
 import cuke4duke.ant.CucumberTask;
 import org.apache.tools.ant.BuildException;
@@ -41,7 +41,7 @@ public class Cuke4DukeJUnit4Runner extends Runner {
             RubyInstanceConfig config = new RubyInstanceConfig();
             config.setOutput(new PrintStream(bos));
             config.setError(new PrintStream(bos));
-            config.setHardExit(false);
+//            config.setHardExit(false);
             String[] args = commandLine.getJavaCommand().getArguments();
             config.processArguments(args);
 

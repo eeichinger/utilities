@@ -1,4 +1,4 @@
-package org.oaky.cuke4duke;
+package cuke4duke;
 
 import cuke4duke.StepMother;
 import cuke4duke.internal.jvmclass.ObjectFactory;
@@ -7,7 +7,6 @@ import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.InstantiationAwareBeanPostProcessorAdapter;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.test.context.TestContextManager;
 

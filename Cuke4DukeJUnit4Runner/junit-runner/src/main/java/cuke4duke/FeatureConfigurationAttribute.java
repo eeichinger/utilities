@@ -1,16 +1,7 @@
-package org.oaky.cuke4duke;
+package cuke4duke;
 
-import cuke4duke.internal.jvmclass.PicoFactory;
-import org.picocontainer.PicoContainer;
 import org.springframework.util.StringUtils;
 
-/**
- * Created by IntelliJ IDEA.
- * User: b1exe04
- * Date: 3/9/11
- * Time: 3:22 PM
- * To change this template use File | Settings | File Templates.
- */
 public class FeatureConfigurationAttribute {
 
     private final Class featureClass;
@@ -21,7 +12,7 @@ public class FeatureConfigurationAttribute {
         AssertUtils.notNull(clazz, "clazz is a mandatory argument");
         featureClass = clazz;
         featureName = featureClass.getSimpleName();
-        objectFactoryClass = PicoFactory.class;
+        objectFactoryClass = Cuke4DukeJUnit4SpringFactory.class;
         FeatureConfiguration cfg = (FeatureConfiguration) clazz.getAnnotation(FeatureConfiguration.class);
         if (cfg != null) {
             setFeatureConfiguration(cfg);

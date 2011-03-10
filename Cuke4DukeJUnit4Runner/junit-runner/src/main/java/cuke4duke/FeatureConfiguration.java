@@ -1,4 +1,4 @@
-package org.oaky.cuke4duke;
+package cuke4duke;
 
 import cuke4duke.internal.jvmclass.PicoFactory;
 

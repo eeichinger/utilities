@@ -4,7 +4,6 @@ import cuke4duke.annotation.After;
 import cuke4duke.annotation.Before;
 import cuke4duke.annotation.I18n.EN.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
 
 import static org.junit.Assert.assertEquals;
 
@@ -15,7 +14,7 @@ public class HelloWorldSteps {
         String currentSubject;
     }
 
-    private final HelloWorldContext helloWorldContext;
+    private HelloWorldContext helloWorldContext;
 
     private HelloWorldContext getContext() {
         return helloWorldContext;
@@ -24,8 +23,14 @@ public class HelloWorldSteps {
     @Autowired
     private HelloWorldService helloWorldService;
 
-    public HelloWorldSteps() {
+    @cuke4duke.annotation.Before
+    public void setupScenario() {
         helloWorldContext = new HelloWorldContext();
+    }
+
+    @cuke4duke.annotation.After
+    public void teardownScenario() {
+        helloWorldContext = null;
     }
 
     @Given("^The Greeting is (.*)$")

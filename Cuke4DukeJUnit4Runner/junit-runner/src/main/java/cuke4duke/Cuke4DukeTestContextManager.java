@@ -1,4 +1,4 @@
-package org.oaky.cuke4duke;
+package cuke4duke;
 
 import org.springframework.test.context.TestContextManager;
 import org.springframework.test.context.TestExecutionListener;

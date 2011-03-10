@@ -4,12 +4,12 @@ Feature: Hello World Feature
   I want to run a quick Cucumber test
 
 Scenario: Maven/Cucumber/Java successfully interact
-	Given The Action is Hello
+	Given The Greeting is Hello
 	When The Subject is World
-	Then The Greeting is Hello, World
+	Then The Message is Hello, World
 
 @doesntexist
 Scenario: A global scenario
-	Given The Action is Hallo
+	Given The Greeting is Hallo
 	When The Subject is Welt
-	Then The Greeting is Hallo, Welt
+	Then The Message is Hallo, Welt

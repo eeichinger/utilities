@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>first</groupId>
-	<artifactId>first</artifactId>
+	<groupId>org.oaky.cuke4duke</groupId>
+	<artifactId>junit-runner</artifactId>
 	<version>0.0.1</version>
 
 	<repositories>
@@ -37,10 +37,15 @@
 
 	<dependencies>
         <dependency>
+            <groupId>org.jruby</groupId>
+            <artifactId>jruby-complete</artifactId>
+            <version>1.6.0.RC3</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
             <version>3.0.5.RELEASE</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>commons-logging</groupId>
@@ -48,6 +53,23 @@
             <version>1.1.1</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+			<version>3.0.5.RELEASE</version>
+		</dependency>
+        <dependency>
+            <groupId>org.hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>2.0.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+			<version>3.0.5.RELEASE</version>
+			<scope>test</scope>
+		</dependency>
         <dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
@@ -92,7 +114,7 @@
                                 <include>**/*Feature.class</include>
                             </includes>
                             <environmentVariables>
-                                <JRUBY_HOME>/Users/Shared/tools/apache-maven-repository/.jruby</JRUBY_HOME>
+                                <!--<JRUBY_HOME>/Users/Shared/tools/apache-maven-repository/.jruby</JRUBY_HOME>-->
                                 <GEM_HOME>/Users/Shared/tools/apache-maven-repository/.jruby</GEM_HOME>
                             </environmentVariables>
                         </configuration>

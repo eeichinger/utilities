@@ -1,21 +1,26 @@
 package org.oaky.cuke4duke;
 
-import com.sun.xml.internal.messaging.saaj.util.ByteInputStream;
 import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
 import cuke4duke.ant.CucumberTask;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.CommandlineJava;
+import org.apache.tools.ant.types.Environment;
 import org.apache.tools.ant.types.Path;
-import org.jruby.Main;
+import org.jruby.Ruby;
+import org.jruby.RubyInstanceConfig;
+import org.jruby.exceptions.RaiseException;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
+import org.springframework.test.context.TestExecutionListener;
+import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 
 import java.io.File;
 import java.io.PrintStream;
 import java.util.Map;
+import java.util.Properties;
 
 public class Cuke4DukeJUnit4Runner extends Runner {
 
@@ -28,26 +33,56 @@ public class Cuke4DukeJUnit4Runner extends Runner {
             getProject().addReference("jruby.classpath", path);
         }
 
-//        @Override
-//        public void execute() throws BuildException {
-//            try {
-////                super.execute();    //To change body of overridden methods use File | Settings | File Templates.
-//            } catch (Throwable e) {
-//                throw new Error(e);
-//            }
-//        }
+        public void setObjectFactory(Class clazz) {
+            Environment.Variable objectFactory = new Environment.Variable();
+            objectFactory.setKey("cuke4duke.objectFactory");
+            objectFactory.setValue(clazz.getName());
+            this.addSysproperty(objectFactory);
+        }
 
         @Override
         protected int executeJava(CommandlineJava commandLine) {
             ByteOutputStream bos = new ByteOutputStream();
-            Main main = new Main(new ByteInputStream(), new PrintStream(bos), new PrintStream(bos));
-            Main.Status status = main.run(commandLine.getJavaCommand().getArguments());
+            RubyInstanceConfig config = new RubyInstanceConfig();
+            config.setOutput(new PrintStream(bos));
+            config.setError(new PrintStream(bos));
+            config.setHardExit(false);
+            String[] args = commandLine.getJavaCommand().getArguments();
+            config.processArguments(args);
 
-            int res = status.getStatus(); // super.executeJava(commandLine);
-            if (res != 0) {
-                throw new Error("[BEGIN]" + bos.toString()+"[END]");
+            Properties systemProperties = System.getProperties();
+            Properties cucumberSystemProperties = new Properties(systemProperties);
+
+            for (Object o : commandLine.getSystemProperties().getVariablesVector()) {
+                Environment.Variable var = (Environment.Variable) o;
+                cucumberSystemProperties.setProperty(var.getKey(), var.getValue());
             }
-            return res;
+            System.setProperties(cucumberSystemProperties);
+            Ruby runtime = Ruby.newInstance(config);
+            try {
+                doSetContextClassLoader(runtime);
+                runtime.runFromMain(config.getScriptSource(), config.displayedFileName());
+            } catch (RaiseException rex) {
+                throw new RuntimeException(bos.toString());
+            } finally {
+                System.setProperties(systemProperties);
+                runtime.tearDown(true);
+            }
+            return 0;
+        }
+
+        private void doSetContextClassLoader(Ruby runtime) {
+            // set thread context JRuby classloader here, for the main thread
+            try {
+                Thread.currentThread().setContextClassLoader(runtime.getJRubyClassLoader());
+            } catch (SecurityException se) {
+                // can't set TC classloader
+/*
+                if (runtime.getInstanceConfig().isVerbose()) {
+                    config.getError().println("WARNING: Security restrictions disallowed setting context classloader for main thread.");
+                }
+*/
+            }
         }
 
         @Override
@@ -64,61 +99,52 @@ public class Cuke4DukeJUnit4Runner extends Runner {
         }
     }
 
-    private Class testClass;
+    private final FeatureConfigurationAttribute fca;
 
     public Cuke4DukeJUnit4Runner(Class clazz) {
-        testClass = clazz;
-    }
-
-    public String getFeatureFile() {
-        Feature featureDefinition = (Feature) testClass.getAnnotation(Feature.class);
-        if (featureDefinition != null) {
-            String featureFile = featureDefinition.value();
-            if (!featureFile.endsWith(".feature")) {
-                featureFile = featureFile + ".feature";
-            }
-            return featureFile;
-        }
-
-        String featureFile = testClass.getSimpleName();
-        if (featureFile.endsWith("Feature")) {
-            featureFile = featureFile.substring(0, featureFile.length() - "Feature".length());
-        }
-        return featureFile + ".feature";
+        fca = new FeatureConfigurationAttribute(clazz);
     }
 
     @Override
     public Description getDescription() {
-        return Description.createTestDescription(testClass, getFeatureFile());
+        return Description.createTestDescription(fca.getFeatureClass(), fca.getFeatureFilename());
     }
 
     @Override
     public void run(RunNotifier runNotifier) {
-        System.out.println("Classpath:" + System.getProperty("java.class.path"));
-//        dumpMap(System.getenv());
-//        dumpMap(System.getProperties());
-
         runNotifier.fireTestStarted(getDescription());
-        CucumberTask task = new InProcessCucumberTask();
+        InProcessCucumberTask task = new InProcessCucumberTask();
         task.setFork(false);
-//        task.setArgs("--require /Users/Shared/workspaces/tmp/cuke-mvn_spike/first/target/test-classes /Users/Shared/workspaces/tmp/cuke-mvn_spike/first/features");
-        System.out.println(testClass.getClassLoader().getResource(testClass.getName().replace('.', '/') + ".class"));
 
-        String featurePath = "features/" + getFeatureFile();
-//        task.setArgs("--require target/test-classes " + featurePath);
-        task.setArgs("--require target/test-classes --require " + featurePath + " --require features/AnotherFeature.feature");
+        String classpath = System.getProperty("java.class.path");
+        String[] classpathElements = classpath.split(";");
+
+        StringBuffer argsBuffer = new StringBuffer();
+        for (String classpathElement : classpathElements) {
+            argsBuffer.append(" --require '").append(classpathElement).append("' ");
+        }
+        argsBuffer.append(" --strict");
+        argsBuffer.append(" --require " + fca.getFeatureFilename());
+
+        task.setArgs(argsBuffer.toString());
+        task.setObjectFactory(fca.getObjectFactoryClass());
+
         try {
+            Cuke4DukeTestContextManager tcm = new Cuke4DukeTestContextManager(fca.getFeatureClass());
+            testContextManagerHolder.set(tcm);
             task.execute();
         } catch (Throwable e) {
             runNotifier.fireTestFailure(new Failure(getDescription(), e));
+        } finally {
+            testContextManagerHolder.remove();
         }
         runNotifier.fireTestFinished(getDescription());
-//        runNotifier.fireTestRunFinished(result);
     }
 
-    private static void dumpMap(Map map) {
-        for (Object key : map.keySet()) {
-            System.out.println(key + "=" + map.get(key));
-        }
+    private static ThreadLocal<Cuke4DukeTestContextManager> testContextManagerHolder =
+            new ThreadLocal<Cuke4DukeTestContextManager>();
+
+    public static Cuke4DukeTestContextManager getTestContextManager() {
+        return testContextManagerHolder.get();
     }
 }

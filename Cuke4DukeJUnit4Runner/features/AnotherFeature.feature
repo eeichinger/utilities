@@ -4,6 +4,6 @@ Feature: Another Feature
   I want to run a quick Cucumber test
 
 Scenario: Maven/Cucumber/Java successfully interact
-	Given The Action is Hola
+	Given The Greeting is Hola
 	When The Subject is Monsieur
-	Then The Greeting is Hola, Monsieur
+	Then The Message is Hola, Monsieur

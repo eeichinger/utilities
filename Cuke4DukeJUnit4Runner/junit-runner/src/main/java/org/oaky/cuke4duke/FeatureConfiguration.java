@@ -1,6 +1,4 @@
-package cuke4duke;
-
-import cuke4duke.internal.jvmclass.PicoFactory;
+package org.oaky.cuke4duke;
 
 @java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.RUNTIME)
 @java.lang.annotation.Target({java.lang.annotation.ElementType.TYPE})

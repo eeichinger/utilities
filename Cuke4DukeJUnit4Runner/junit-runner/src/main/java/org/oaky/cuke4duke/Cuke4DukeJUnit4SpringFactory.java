@@ -1,4 +1,4 @@
-package cuke4duke;
+package org.oaky.cuke4duke;
 
 import cuke4duke.StepMother;
 import cuke4duke.internal.jvmclass.ObjectFactory;

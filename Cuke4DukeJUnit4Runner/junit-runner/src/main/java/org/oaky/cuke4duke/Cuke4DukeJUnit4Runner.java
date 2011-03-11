@@ -1,4 +1,4 @@
-package cuke4duke;
+package org.oaky.cuke4duke;
 
 import cuke4duke.ant.CucumberTask;
 import org.apache.tools.ant.BuildException;
@@ -110,6 +110,8 @@ public class Cuke4DukeJUnit4Runner extends Runner {
         runNotifier.fireTestStarted(getDescription());
         InProcessCucumberTask task = new InProcessCucumberTask();
         task.setFork(false);
+
+        System.out.println("working dir:" + new File(".").getAbsolutePath());
 
         String classpath = System.getProperty("java.class.path");
         String[] classpathElements = classpath.split(";");

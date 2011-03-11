@@ -1,4 +1,4 @@
-package cuke4duke;
+package org.oaky.cuke4duke;
 
 import org.springframework.util.StringUtils;
 

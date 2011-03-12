@@ -13,6 +13,7 @@ import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
+import org.springframework.core.io.ClassPathResource;
 
 import java.io.*;
 import java.util.Properties;
@@ -26,6 +27,11 @@ public class Cuke4DukeJUnit4Runner extends Runner {
             setProject(project);
             Path path = new Path(project, System.getProperty("java.class.path"));
             getProject().addReference("jruby.classpath", path);
+//            Environment.Variable gemHome = new Environment.Variable();
+//            gemHome.setKey("jruby.gem.home");
+//            gemHome.setValue(calculateJRubyHome());
+//            this.addSysproperty(gemHome);
+//            System.getenv().put("GEM_HOME", gemHome.getValue());
         }
 
         public void setObjectFactory(Class clazz) {
@@ -53,12 +59,15 @@ public class Cuke4DukeJUnit4Runner extends Runner {
                 cucumberSystemProperties.setProperty(var.getKey(), var.getValue());
             }
             System.setProperties(cucumberSystemProperties);
+            cucumberSystemProperties.setProperty("jruby.gem.home", calculateJRubyHome());
+//            cucumberSystemProperties.setProperty("jruby.gem.path", calculateJRubyHome());
+
             Ruby runtime = Ruby.newInstance(config);
             try {
                 doSetContextClassLoader(runtime);
                 runtime.runFromMain(config.getScriptSource(), config.displayedFileName());
             } catch (RaiseException rex) {
-                throw new RuntimeException(bos.toString());
+                throw new RuntimeException(bos.toString(), rex);
             } finally {
                 System.setProperties(systemProperties);
                 runtime.tearDown(true);
@@ -82,15 +91,33 @@ public class Cuke4DukeJUnit4Runner extends Runner {
 
         @Override
         protected File getJrubyHome() {
+            String jruby_home = calculateJRubyHome();
+
+            return new File(jruby_home);
+        }
+
+        private String calculateJRubyHome() {
             String jruby_home = System.getenv("JRUBY_HOME");
             if (jruby_home == null) {
                 jruby_home = System.getenv("GEM_HOME");
             }
             if (jruby_home == null) {
+                ClassPathResource propsFile = new ClassPathResource("/cuke4dukejunitrunner.properties");
+                if (propsFile.exists()) {
+                    Properties props = new Properties();
+                    try {
+                        props.load(propsFile.getInputStream());
+                        jruby_home = props.getProperty("gem.home");
+                        System.out.println("loaded jruby_home from props file: " + jruby_home);
+                    } catch (IOException e) {
+                        log("Failed loading cuke4dukejunitrunner.properties", e, 0);
+                    }
+                }
+            }
+            if (jruby_home == null) {
                 throw new BuildException("you must set either JRUBY_HOME or GEM_HOME environment variable");
             }
-
-            return new File(jruby_home);
+            return jruby_home;
         }
     }
 
@@ -114,7 +141,7 @@ public class Cuke4DukeJUnit4Runner extends Runner {
         System.out.println("working dir:" + new File(".").getAbsolutePath());
 
         String classpath = System.getProperty("java.class.path");
-        String[] classpathElements = classpath.split(";");
+        String[] classpathElements = classpath.split(File.pathSeparator);
 
         StringBuffer argsBuffer = new StringBuffer();
         for (String classpathElement : classpathElements) {
@@ -126,6 +153,8 @@ public class Cuke4DukeJUnit4Runner extends Runner {
         task.setArgs(argsBuffer.toString());
         task.setObjectFactory(fca.getObjectFactoryClass());
 
+        System.out.println("args:" + argsBuffer.toString());
+        
         try {
             Cuke4DukeTestContextManager tcm = new Cuke4DukeTestContextManager(fca.getFeatureClass());
             testContextManagerHolder.set(tcm);

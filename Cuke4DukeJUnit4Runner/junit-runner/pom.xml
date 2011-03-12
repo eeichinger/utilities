@@ -8,6 +8,7 @@
 	<artifactId>junit-runner</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 
+<!--
 	<repositories>
 		<repository>
 			<id>codehaus</id>
@@ -18,13 +19,16 @@
 			<url>http://cukes.info/maven</url>
 		</repository>
 	</repositories>
+-->
 
+<!--
 	<pluginRepositories>
 		<pluginRepository>
 			<id>cukes</id>
 			<url>http://cukes.info/maven</url>
 		</pluginRepository>
 	</pluginRepositories>
+-->
 
 	<properties>
 		<cuke4duke.version>0.4.3</cuke4duke.version>

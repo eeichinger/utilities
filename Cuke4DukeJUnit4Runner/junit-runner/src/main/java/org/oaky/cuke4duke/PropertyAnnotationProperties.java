@@ -6,8 +6,9 @@ import java.util.Properties;
 public class PropertyAnnotationProperties extends Properties {
 
     public PropertyAnnotationProperties(Object instance, Properties defaultValues) {
-//        super(defaultValues);
-        super.putAll(defaultValues);
+        if (defaultValues != null) {
+            super.putAll(defaultValues);
+        }
 
         if (instance == null) return;
 

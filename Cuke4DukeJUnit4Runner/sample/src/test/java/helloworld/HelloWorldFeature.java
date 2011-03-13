@@ -9,7 +9,7 @@ import org.springframework.test.context.transaction.BeforeTransaction;
 import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(Cuke4DukeJUnit4Runner.class)
-@FeatureConfiguration("features/HelloWorld.feature:6")
+@FeatureConfiguration("features/HelloWorld.feature")
 @ContextConfiguration("HelloWorldFeature-context.xml")
 @Transactional
 public class HelloWorldFeature {

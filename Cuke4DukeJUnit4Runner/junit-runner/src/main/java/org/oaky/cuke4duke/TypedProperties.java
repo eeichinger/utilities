@@ -33,7 +33,7 @@ public class TypedProperties {
                 if (val instanceof Boolean) {
                     return (Boolean) val;
                 }
-                return Boolean.getBoolean(""+val);
+                return Boolean.valueOf(""+val);
             } catch (Exception e) {
                 throw new RuntimeException("Error accessing property '" + propertyName + "'", e);
             }

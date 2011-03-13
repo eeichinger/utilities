@@ -49,10 +49,10 @@ public class Cuke4DukeJUnit4SpringFactory implements ObjectFactory {
             BeanDefinition bd = BeanDefinitionBuilder.genericBeanDefinition(clazz)
                     .setLazyInit(true)
                     .getBeanDefinition();
-            appContext.registerBeanDefinition("__class" + clazz.toString(), bd);
+            appContext.registerBeanDefinition(clazz.getName() + "[" + this.hashCode() + "]", bd);
         }
         for (Object instance : instances) {
-            appContext.getBeanFactory().registerSingleton("__instance" + instance.hashCode(), instance);
+            appContext.getBeanFactory().registerSingleton(instance.getClass().getName() + "[" + this.hashCode() + ", instance:" + instance.hashCode() + "]", instance);
         }
         appContext.refresh();
         try {
@@ -73,7 +73,8 @@ public class Cuke4DukeJUnit4SpringFactory implements ObjectFactory {
     }
 
     public boolean canHandle(Class<?> clazz) {
-        return !clazz.getName().startsWith(this.getClass().getPackage().getName());
+//        return !clazz.getName().startsWith(this.getClass().getPackage().getName());
+        return true;
     }
 
     public void addClass(Class<?> clazz) {

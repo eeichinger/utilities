@@ -8,10 +8,8 @@ import org.springframework.test.context.transaction.AfterTransaction;
 import org.springframework.test.context.transaction.BeforeTransaction;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
-
 @RunWith(Cuke4DukeJUnit4Runner.class)
-@FeatureConfiguration(name="HelloWorld")
+@FeatureConfiguration(file ="features/HelloWorld.feature:12")
 @ContextConfiguration("HelloWorldFeature-context.xml")
 @Transactional
 public class HelloWorldFeature {

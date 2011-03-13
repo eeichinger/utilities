@@ -20,8 +20,8 @@ public class FeatureConfigurationAttribute {
     }
 
     public void setFeatureConfiguration(FeatureConfiguration cfg) {
-        if (StringUtils.hasText(cfg.name())) {
-            this.featureName = cfg.name();
+        if (StringUtils.hasText(cfg.file())) {
+            this.featureName = cfg.file();
         }
         if (cfg.objectFactory() != Object.class) {
             this.objectFactoryClass = cfg.objectFactory();
@@ -39,9 +39,8 @@ public class FeatureConfigurationAttribute {
     public String getFeatureFilename() {
         String fn = featureName;
         if (featureName.endsWith("Feature")) {
-            fn = featureName.substring(0, featureName.length() - "Feature".length());
+            fn = featureName.substring(0, featureName.length() - "Feature".length()) + ".feature";
         }
-
-        return "features/" + fn + ".feature";
+        return fn;
     }
 }

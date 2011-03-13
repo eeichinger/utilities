@@ -6,4 +6,4 @@ Feature: Another Feature
 Scenario: Maven/Cucumber/Java successfully interact
 	Given The Greeting is Hola
 	When The Subject is Monsieur
-	Then The Message is Hola, Monsieur
+	Then The Message is Hola Monsieur

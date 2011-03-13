@@ -1,4 +1,4 @@
-package org.oaky.cuke4duke;
+package org.oaky.cuke4duke.spring;
 
 import org.springframework.test.context.TestContextManager;
 import org.springframework.test.context.TestExecutionListener;
@@ -23,19 +23,26 @@ public class Cuke4DukeTestContextManager extends TestContextManager {
         try {
             this.testInstance = testClass.newInstance();
             this.testMethod = testClass.getMethod("toString");
-            List<TestExecutionListener> testExecutionListeners = getTestExecutionListeners();
-            for(int i=0;i<testExecutionListeners.size();i++) {
-                TestExecutionListener testExecutionListener = testExecutionListeners.get(i);
-                if (testExecutionListener instanceof TransactionalTestExecutionListener) {
-                    Class<? extends TestExecutionListener> testExecutionListenerClass = testExecutionListener.getClass();
-                    Field field = testExecutionListenerClass.getDeclaredField("attributeSource");
-                    field.setAccessible(true);
-                    field.set(testExecutionListener, new SimpleAnnotationTransactionAttributeSource());
-                    break;
-                };
-            }
+            applyTransactionAttributeSourceFix(getTestExecutionListeners());
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * The default transaction annotation lookup logic doesnt pick up a @Transaction annotation on
+     * a class without methods
+     */
+    private static void applyTransactionAttributeSourceFix(List<TestExecutionListener> testExecutionListeners) throws NoSuchFieldException, IllegalAccessException {
+        for(int i=0;i<testExecutionListeners.size();i++) {
+            TestExecutionListener testExecutionListener = testExecutionListeners.get(i);
+            if (testExecutionListener instanceof TransactionalTestExecutionListener) {
+                Class<? extends TestExecutionListener> testExecutionListenerClass = testExecutionListener.getClass();
+                Field field = testExecutionListenerClass.getDeclaredField("attributeSource");
+                field.setAccessible(true);
+                field.set(testExecutionListener, new SimpleAnnotationTransactionAttributeSource());
+                break;
+            };
         }
     }
 

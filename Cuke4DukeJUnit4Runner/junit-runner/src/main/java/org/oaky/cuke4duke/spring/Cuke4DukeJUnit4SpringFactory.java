@@ -1,7 +1,8 @@
-package org.oaky.cuke4duke;
+package org.oaky.cuke4duke.spring;
 
 import cuke4duke.StepMother;
 import cuke4duke.internal.jvmclass.ObjectFactory;
+import org.oaky.cuke4duke.Cuke4DukeJUnit4Runner;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -41,7 +42,7 @@ public class Cuke4DukeJUnit4SpringFactory implements ObjectFactory {
     }
 
     public void createObjects() {
-        tcm = Cuke4DukeJUnit4Runner.getTestContextManager();
+        tcm = new Cuke4DukeTestContextManager(Cuke4DukeJUnit4Runner.getCurrentFeatureClass());
         appContext = new StaticApplicationContext();
         appContext.getBeanFactory().addBeanPostProcessor(new TestContextBeanPostProcessor(tcm));
         for (Class<?> clazz : classes) {

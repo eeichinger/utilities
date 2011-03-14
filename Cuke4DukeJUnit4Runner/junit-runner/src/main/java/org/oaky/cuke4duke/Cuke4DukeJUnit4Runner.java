@@ -27,8 +27,10 @@ public class Cuke4DukeJUnit4Runner extends Runner {
         try {
             JUnitRunnerCucumberTask task = new JUnitRunnerCucumberTask();
             String classpath = System.getProperty("java.class.path");
+	        System.out.println("classpath=" + classpath);
             task.setClasspath(classpath);
-            task.setGemHome(fca.getGemHome());
+	        String gemHome = fca.getGemHome();
+	        task.setGemHome(gemHome);
 
             String args = buildCommandlineArgs(task);
             task.setArgs(args);
@@ -62,7 +64,7 @@ public class Cuke4DukeJUnit4Runner extends Runner {
 
         argsBuffer.append(" " + fca.getFeatureFilename());
 
-        System.out.println("args:" + argsBuffer.toString());
+//        System.out.println("args:" + argsBuffer.toString());
         return argsBuffer.toString();
     }
 

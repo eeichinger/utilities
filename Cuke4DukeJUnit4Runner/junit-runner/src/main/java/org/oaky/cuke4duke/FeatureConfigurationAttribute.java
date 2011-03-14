@@ -1,9 +1,14 @@
 package org.oaky.cuke4duke;
 
 import org.apache.tools.ant.BuildException;
+import org.jruby.embed.util.SystemPropertyCatcher;
 
+import java.io.File;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Properties;
+
+import static org.jruby.util.URLUtil.getPath;
 
 public class FeatureConfigurationAttribute {
 
@@ -74,9 +79,53 @@ public class FeatureConfigurationAttribute {
     }
 
     protected String calculateJGemHome() {
-        String jruby_home = coalesce(System.getenv("GEM_HOME"), System.getenv("JRUBY_HOME"));
+//        String jruby_home = coalesce(System.getenv("GEM_HOME"), System.getenv("JRUBY_HOME"));
+	    String jruby_home = findGemHome(this);
         return jruby_home;
     }
+
+	public static String findGemHome(Object instance) {
+	    String jrubyhome;
+	    if ((jrubyhome = System.getenv("GEM_HOME")) != null) {
+	        return jrubyhome;
+	    } else if ((jrubyhome = System.getProperty("jruby.gem.home")) != null) {
+	        return jrubyhome;
+	    } else if ((jrubyhome = findFromJar(instance)) != null) {
+	        return jrubyhome;
+	    } else {
+	        return null;
+	    }
+	}
+
+	public static String findFromJar(Object instance) {
+	    URL resource = instance.getClass().getResource("/META-INF/jruby.gem.home");
+	    if (resource == null) {
+	        return null;
+	    }
+
+	    String location = null;
+	    if (resource.getProtocol().equals("jar")) {
+	        location = getPath(resource);
+	        if (!location.startsWith("file:") && !location.startsWith("/")) {
+	            // for remote-sourced classpath resources, just use classpath:
+	            location = "classpath:/META-INF/jruby.gem.home";
+	        }
+	    } else {
+		    location = "classpath:/META-INF/jruby.gem.home";
+//		    if (resource.getProtocol().equals("file")) {
+//			    location = new File(resource.getFile()).getAbsolutePath();
+//		    } else {
+//			    location = "classpath:/META-INF/jruby.gem.home";
+//		    }
+	    }
+
+	    // Trim trailing slash. It confuses OSGi containers...
+	    if (location.endsWith("/")) {
+	        location = location.substring(0, location.length() - 1);
+	    }
+
+	    return location;
+	}
 
     protected Properties loadRuntimeProperties(Class clazz) {
         Properties props = new Properties();

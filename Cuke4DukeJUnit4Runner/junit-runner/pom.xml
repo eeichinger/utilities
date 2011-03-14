@@ -30,6 +30,53 @@
 		<cuke4duke.version>0.4.3</cuke4duke.version>
 	</properties>
 
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.4.3</version>
+				<executions>
+					<execution>
+						<id>copy-jruby-files</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<resources>
+								<resource>
+									<directory>${settings.localRepository}/.jruby</directory>
+									<filtering>false</filtering>
+								</resource>
+							</resources>
+							<outputDirectory>${project.build.outputDirectory}/META-INF/jruby.gem.home</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>cuke4duke</groupId>
+				<artifactId>cuke4duke-maven-plugin</artifactId>
+				<version>${cuke4duke.version}</version>
+				<configuration>
+                    <installGems>true</installGems>
+					<gems>
+						<gem>install cuke4duke --version ${cuke4duke.version}</gem>
+					</gems>
+					<skip>true</skip>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>cucumber</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+	
 	<dependencies>
         <dependency>
             <groupId>junit</groupId>
@@ -64,5 +111,4 @@
             <optional>true</optional>
 		</dependency>
 	</dependencies>
-
 </project>

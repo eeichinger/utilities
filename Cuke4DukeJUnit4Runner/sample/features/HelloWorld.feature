@@ -8,7 +8,6 @@ Scenario: Maven/Cucumber/Java successfully interact
 	When The Subject is World
 	Then The Message is Hello, World
 
-@wip
 Scenario: A global scenario
 	Given The Greeting is Hallo
 	When The Subject is Welt

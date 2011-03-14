@@ -133,17 +133,6 @@
                     </execution>
                 </executions>
             </plugin>
-			<plugin>
-				<groupId>cuke4duke</groupId>
-				<artifactId>cuke4duke-maven-plugin</artifactId>
-				<version>${cuke4duke.version}</version>
-				<configuration>
-                    <installGems>true</installGems>
-					<gems>
-						<gem>install cuke4duke --version ${cuke4duke.version}</gem>
-					</gems>
-				</configuration>
-			</plugin>
 		</plugins>
 	</build>
 </project>

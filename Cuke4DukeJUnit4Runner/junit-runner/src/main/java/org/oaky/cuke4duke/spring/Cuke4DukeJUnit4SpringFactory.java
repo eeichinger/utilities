@@ -73,8 +73,8 @@ public class Cuke4DukeJUnit4SpringFactory implements ObjectFactory {
     }
 
     public boolean canHandle(Class<?> clazz) {
-//        return !clazz.getName().startsWith(this.getClass().getPackage().getName());
-        return true;
+        return !clazz.getName().startsWith(this.getClass().getPackage().getName());
+//        return true;
     }
 
     public void addClass(Class<?> clazz) {

@@ -32,6 +32,7 @@
 
 	<build>
 		<plugins>
+<!--
 			<plugin>
 				<artifactId>maven-resources-plugin</artifactId>
 				<version>2.4.3</version>
@@ -61,7 +62,7 @@
 				<configuration>
                     <installGems>true</installGems>
 					<gems>
-						<gem>install cuke4duke --version ${cuke4duke.version}</gem>
+						<gem>install cuke4duke -version ${cuke4duke.version}</gem>
 					</gems>
 					<skip>true</skip>
 				</configuration>
@@ -74,10 +75,16 @@
 					</execution>
 				</executions>
 			</plugin>
+-->
 		</plugins>
 	</build>
 	
 	<dependencies>
+        <dependency>
+            <groupId>org.oaky.cuke4duke</groupId>
+            <artifactId>junit-runner-jruby</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

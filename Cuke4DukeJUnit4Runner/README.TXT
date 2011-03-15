@@ -1,0 +1,1 @@
+moved to https://github.com/eeichinger/cuke4duke-junit

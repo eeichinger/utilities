@@ -111,12 +111,12 @@ public class FeatureConfigurationAttribute {
 	            location = "classpath:/META-INF/jruby.gem.home";
 	        }
 	    } else {
-		    location = "classpath:/META-INF/jruby.gem.home";
-//		    if (resource.getProtocol().equals("file")) {
-//			    location = new File(resource.getFile()).getAbsolutePath();
-//		    } else {
-//			    location = "classpath:/META-INF/jruby.gem.home";
-//		    }
+//		    location = "classpath:/META-INF/jruby.gem.home";
+		    if (resource.getProtocol().equals("file")) {
+			    location = new File(resource.getFile()).getAbsolutePath();
+		    } else {
+			    location = "classpath:/META-INF/jruby.gem.home";
+		    }
 	    }
 
 	    // Trim trailing slash. It confuses OSGi containers...

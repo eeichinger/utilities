@@ -64,7 +64,6 @@ public class Cuke4DukeJUnit4Runner extends Runner {
 
         argsBuffer.append(" " + fca.getFeatureFilename());
 
-//        System.out.println("args:" + argsBuffer.toString());
         return argsBuffer.toString();
     }
 
@@ -73,7 +72,8 @@ public class Cuke4DukeJUnit4Runner extends Runner {
         String[] classpathElements = classpath.split(File.pathSeparator);
 
         for (String classpathElement : classpathElements) {
-            if (!classpathElement.endsWith(".jar"))
+            if (!classpathElement.endsWith(".jar")
+                && !classpathElement.contains("junit-runner"))
                 argsBuffer.append(" --require '").append(classpathElement).append("' ");
         }
     }
